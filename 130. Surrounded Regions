@@ -1,0 +1,62 @@
+//https://leetcode.com/problems/surrounded-regions/
+
+class Solution {
+public:
+    bool seen = false;
+
+    void mark(vector<vector<char>>& board, int i, int j, int row, int col) {
+        if (i < 0 || i > row - 1 || j < 0 || j > col-1) {
+            return;
+        }
+        if (board[i][j] == 'X')
+            return;
+        
+        board[i][j] = 'X';
+        mark(board, i+1, j, row, col);
+        mark(board, i-1, j, row, col);
+        mark(board, i, j+1, row, col);
+        mark(board, i, j-1, row, col);
+    }
+    
+    void dfs (vector<vector<char>>& board, int i, int j, int row, int col, vector<vector<bool>>& visited) {
+        if (i < 0 || i > row - 1 || j < 0 || j > col - 1) {
+            return;
+        }
+        
+        if (board[i][j] =='X' || visited[i][j] )
+            return;
+        
+        if (i <= 0 || i >= row - 1 || j <= 0 || j >= col -1) {
+            seen = true;
+        }
+        
+        visited[i][j] = true;
+        dfs(board, i+1, j, row, col, visited);
+        dfs(board, i-1, j, row, col, visited);
+        dfs(board, i, j+1, row, col, visited);
+        dfs(board, i, j-1, row, col, visited);
+    }
+    
+    void solve(vector<vector<char>>& board) {
+        int row = board.size();
+        int col = board[0].size();
+
+        if (row <= 1 || col <= 1) {
+            return;
+        }
+        
+        vector<vector<bool>> visited(row, vector<bool>(col, false));
+
+        for (int i = 0; i < row - 1; i++) {
+            for (int j = 0; j < col - 1; j++) {
+                if (board[i][j] == 'O' && !visited[i][j]) {
+                    seen = false;
+                    dfs(board, i, j, row, col, visited);
+                    if (seen == false) {
+                        mark(board, i, j, row, col);
+                    }
+                }
+            }
+        }
+    }
+};
